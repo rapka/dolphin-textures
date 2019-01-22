@@ -20,3 +20,6 @@ Copy the texture folder from `Dolphin Emulator/Dump/Textures/[gameid]`
 -Files mentioned in `include/[gameid].txt` are excluded from the above rules
 
 -Files mentioned in `ignore/[gameid].txt` are always moved to `ignore`
+
+
+Looking for my actual texture packs? see packs.MD
