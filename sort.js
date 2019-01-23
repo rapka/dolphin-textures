@@ -80,8 +80,7 @@ const processImage = async (file, filePath) => {
 		console.log(`image with alpha channel found: ${file}`);
 		const metadata = await sharp(filePath).metadata();
 
-		fs.renameSync(filePath, `${__dirname}/alpha/${file}`);
-
+		// Uncomment these to enable alpha channel splitting
 		// await sharp(filePath)
 		// 	.resize({ width: metadata.width * 4 })
 		// 	.extractChannel(3)
@@ -90,6 +89,8 @@ const processImage = async (file, filePath) => {
 		// await sharp(filePath)
 		// 	.removeAlpha()
 		// 	.toFile(`${__dirname}/alphaflattened/${file}`);
+
+		fs.renameSync(filePath, `${__dirname}/alpha/${file}`);
 
 		return;
 	} else {
