@@ -81,16 +81,24 @@ const processImage = async (file, filePath) => {
 		const metadata = await sharp(filePath).metadata();
 
 		// Uncomment these to enable alpha channel splitting
-		// await sharp(filePath)
-		// 	.resize({ width: metadata.width * 4 })
-		// 	.extractChannel(3)
-		// 	.toFile(`${__dirname}/alphachannel/${file}`);
+		await sharp(filePath)
+			.extractChannel(3)
+			.resize({ width: metadata.width * 4, kernel: 'lanczos3' })
+			//.resize({ width: metadata.width, kernel: 'nearest'})
+			.toFile(`${__dirname}/alphachannel/a-${file}`);
+
+		await sharp(`${__dirname}/alphachannel/a-${file}`)
+			.resize({ width: metadata.width, kernel: 'lanczos3' })
+			//.resize({ width: metadata.width, kernel: 'nearest'})
+			.toFile(`${__dirname}/alphachannel/${file}`);
+
+		fs.unlinkSync(`${__dirname}/alphachannel/a-${file}`);
 
 		// await sharp(filePath)
 		// 	.removeAlpha()
 		// 	.toFile(`${__dirname}/alphaflattened/${file}`);
 
-		fs.renameSync(filePath, `${__dirname}/alpha/${file}`);
+		//fs.renameSync(filePath, `${__dirname}/alpha/${file}`);
 
 		return;
 	} else {
