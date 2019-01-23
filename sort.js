@@ -91,10 +91,6 @@ const processImage = async (file, filePath) => {
 		// 	.removeAlpha()
 		// 	.toFile(`${__dirname}/alphaflattened/${file}`);
 
-		fs.renameSync(filePath, `${__dirname}/alpha/${file}`, (err)=> {
-			// console.log(`error copying non-alpha texture: ${file} ${err}`);
-		});
-
 		return;
 	} else {
 		console.log(`image without alpha found: ${file}`)
