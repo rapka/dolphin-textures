@@ -1,4 +1,4 @@
-Looking for my actual texture packs? see [PACKS.md](PACKS.md)
+*Looking for my actual texture packs? see [PACKS.md](PACKS.md)*
 
 # dolphin-textures
 This is a script for batch upscaling of images with [ESRGAN](https://github.com/xinntao/ESRGAN). It is designed to be used with textures dumped from the Dolphin Gamecube/Wii emulator, but can be used for any images.
@@ -15,7 +15,7 @@ Additionally, Node.js v10 is required, which can be download [here](https://node
 3. Any images you don't want to be upscaled can be added to `ignore/[gameID].txt`. Similarly, any images that you aboslutely want to be upscaled can be added to `include/[gameID].txt`. My personal settings for some games are already included.
 4. Run `npm run upscale [gameid]`!
 5. Your upscaled images will (eventually) be in `output/[gameID]/alpha-final` and `output/[gameID]/nonalpha-final`. Any ignored images will be untouched and moved to `output/gameID/ignored`.
-6. If you're planning on distrubiting these results 
+6. If you're planning on distrubiting these results as a texture pack for Dolphin, consider converting the images from PNG to DDS using the [Custom Texture Tool](https://forums.dolphin-emu.org/Thread-custom-texture-tool-ps-v38-0) for performance reasons
 
 # Implementation details
 Before upscaling, the script does a few checks to make sure each image is actually worth upscaling:
