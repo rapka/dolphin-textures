@@ -9,6 +9,7 @@ const folderPath = `${__dirname}/input/${gameKey}`;
 let ignoreList = [];
 let includeList = [];
 
+// Load game specific exceptions
 if (fs.existsSync(`ignore/${gameKey}.txt`)) {
 	ignoreList = fs.readFileSync(`ignore/${gameKey}.txt`).toString().split('\n');
 }
@@ -30,18 +31,17 @@ try {
 	fs.mkdirSync(`${outputPath}/alphachannel-processed`);
 	fs.mkdirSync(`${outputPath}/alpha-processed`);
 	fs.mkdirSync(`${outputPath}/nonalpha`);
-	fs.mkdirSync(`${outputPath}/nonalpha-processed`);
-	fs.mkdirSync(`${outputPath}/alpha-combined`);
+	fs.mkdirSync(`${outputPath}/nonalpha-final`);
+	fs.mkdirSync(`${outputPath}/alpha-final`);
 	fs.mkdirSync(`${outputPath}/ignored`);
 	fs.mkdirSync(`${outputPath}/fmv`);
 } catch {
-
+	// Let these fail silentl
 }
 
 const esrganNonalpha = async () => {
 	console.log('Starting ESRGAN for non-alpha textures');
-	const child = spawn('python', [testPyPath, modelPath, `${outputPath}/nonalpha`, `${outputPath}/nonalpha-processed`]);
-	//const child = spawn('python', ['--help']);
+	const child = spawn('python', [testPyPath, modelPath, `${outputPath}/nonalpha`, `${outputPath}/nonalpha-final`]);
 
 	child.stdout.pipe(process.stdout);
 	child.stderr.pipe(process.stderr);
@@ -74,29 +74,14 @@ const esrganAlphaChannel = async () => {
 
 	child.on('close', (code) => {
 		console.log(`child process exited with code ${code}`);
-		combineAlpha();
+		combineAlphaChannels();
 	});
 };
 
-const main = async () => {
-	const files = fs.readdirSync(folderPath);
-
-	console.log(`Processing ${files.length} textures.`)
-
-	let file;
-	for (let i = 0; i < files.length; i++) {
-		file = files[i];
-
-		const filePath = `${folderPath}/${file}`;
-
-		await processImage(file, filePath);
-	}
-};
-
-const combineAlpha = async () => {
+const combineAlphaChannels = async () => {
 	const files = fs.readdirSync(`${outputPath}/alpha-processed`);
 
-	console.log(`Combining ${files.length} textures.`)
+	console.log(`Combining alpha into ${files.length} textures.`)
 
 	let file;
 	for (let i = 0; i < files.length; i++) {
@@ -112,13 +97,14 @@ const combineAlpha = async () => {
 
 const combine = async (imagePath, alphaPath, file) => {
 	const metadata = await sharp(alphaPath).metadata();
+	// Gamma correction is used to compensate for noise added by ESRGAN
 	const alpha = await sharp(alphaPath).toColourspace('b-w').gamma(3.0).raw().toBuffer();
 
 	await sharp(imagePath).joinChannel(alpha, {raw: {
 		width: metadata.width,
 		height: metadata.height,
 		channels: 1,
-	 }}).toFile(`${outputPath}/alpha-combined/${file}`);
+	 }}).toFile(`${outputPath}/alpha-final/${file}`);
 };
 
 const isMonoColor = (stats) => {
@@ -139,8 +125,10 @@ const processImage = async (file, filePath) => {
 		return;
 	}
 
-	// remove mipmaps
+	// Allow users to manually exclude files from these rules
+	// Handy for textures that match the fmv resolutions that aren't actually FMV frames
 	if (!includeList.includes(file)) {
+		// remove mipmaps
 		if (file.includes('_mip')) {
 			console.log(`mipmap found, removing: ${file}`);
 			fs.unlinkSync(filePath);
@@ -161,6 +149,7 @@ const processImage = async (file, filePath) => {
 
 	const stats = await sharp(filePath).stats();
 
+	// Delete single color textures
 	if (isMonoColor(stats)) {
 		console.log(`single color image found, removing: ${file}`);
 		fs.unlinkSync(filePath);
@@ -171,6 +160,7 @@ const processImage = async (file, filePath) => {
 		console.log(`image with alpha channel found: ${file}`);
 		const metadata = await sharp(filePath).metadata();
 
+		// Upscale then downscale alpha channel to create an antialiasing effect
 		await sharp(filePath)
 			.resize({ width: metadata.width * 4, kernel: 'lanczos3' })
 			.extractChannel(3)
@@ -181,9 +171,8 @@ const processImage = async (file, filePath) => {
 			.greyscale()
 			.toFile(`${outputPath}/alphachannel/${file}`);
 
-		fs.unlinkSync(`${outputPath}/alphachannel/a-${file}`);	
+		fs.unlinkSync(`${outputPath}/alphachannel/a-${file}`);
 
-		// fs.copyFileSync(filePath, `${outputPath}/alpha/${file}`);
 		await sharp(filePath)
 			.removeAlpha()
 			.toFile(`${outputPath}/alpha/${file}`);
@@ -195,6 +184,20 @@ const processImage = async (file, filePath) => {
 	}
 };
 
+const main = async () => {
+	const files = fs.readdirSync(folderPath);
+
+	console.log(`Processing ${files.length} textures.`)
+
+	let file;
+	for (let i = 0; i < files.length; i++) {
+		file = files[i];
+
+		const filePath = `${folderPath}/${file}`;
+
+		await processImage(file, filePath);
+	}
+};
+
 main()
-.then(() => esrganNonalpha())
-.then(() => console.log('Done.'));
+.then(() => esrganNonalpha());
