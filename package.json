@@ -2,9 +2,9 @@
   "name": "dolphin-textures",
   "version": "1.0.0",
   "description": "Scripts and utilities for upscaling game textures for Dolphin",
-  "main": "sort.js",
+  "main": "upscale.js",
   "scripts": {
-    "sort": "node sort.js",
+    "upscale": "node upscale.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "rapka",

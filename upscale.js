@@ -36,7 +36,7 @@ try {
 	fs.mkdirSync(`${outputPath}/ignored`);
 	fs.mkdirSync(`${outputPath}/fmv`);
 } catch {
-	// Let these fail silentl
+	// Let these fail silently
 }
 
 const esrganNonalpha = async () => {
