@@ -11,11 +11,11 @@ let includeList = [];
 
 // Load game specific exceptions
 if (fs.existsSync(`ignore/${gameKey}.txt`)) {
-	ignoreList = fs.readFileSync(`ignore/${gameKey}.txt`).toString().split('\n');
+	ignoreList = fs.readFileSync(`ignore/${gameKey}.txt`).toString().replace(/\r/g, '').split('\n');
 }
 
 if (fs.existsSync(`include/${gameKey}.txt`)) {
-	includeList = fs.readFileSync(`include/${gameKey}.txt`).toString().split('\n');
+	includeList = fs.readFileSync(`include/${gameKey}.txt`).toString().replace(/\r/g, '').split('\n');
 }
 
 const outputPath = `${__dirname}/output/${gameKey}-output`;
@@ -86,7 +86,7 @@ const combineAlphaChannels = async () => {
 	let file;
 	for (let i = 0; i < files.length; i++) {
 		file = files[i];
-		console.log(`Merging ${file}`);
+		console.log(`Merging #${i}/${files.length} ${file}`);
 
 		const imagePath = `${outputPath}/alpha-processed/${file}`;
 		const alphaPath = `${outputPath}/alphachannel-processed/${file}`;
@@ -98,7 +98,7 @@ const combineAlphaChannels = async () => {
 const combine = async (imagePath, alphaPath, file) => {
 	const metadata = await sharp(alphaPath).metadata();
 	// Gamma correction is used to compensate for noise added by ESRGAN
-	const alpha = await sharp(alphaPath).toColourspace('b-w').gamma(3.0).raw().toBuffer();
+	const alpha = await sharp(alphaPath).toColourspace('b-w').gamma(2.4).raw().toBuffer();
 
 	await sharp(imagePath).joinChannel(alpha, {raw: {
 		width: metadata.width,
