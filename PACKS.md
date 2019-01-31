@@ -4,7 +4,7 @@ If you're using these alongside another texture pack (like Hypatia's Viewtiful J
 
 
 
-GM8E01: https://mega.nz/#!2JEDHIQT!9UVh6ML_DH8zSjZbukqiNuReDkdKFwsDz8V2xQiQST4.
+GM8E01: https://mega.nz/#!2JEDHIQT!9UVh6ML_DH8zSjZbukqiNuReDkdKFwsDz8V2xQiQST4
 
 GT3E52: https://mega.nz/#!Wd8CUSYC!4kXspst7w3DJbcNqvns1XdJQKqZL0Z7u39NfcMoEDmg
 
