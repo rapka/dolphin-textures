@@ -9,3 +9,9 @@ Metroid Prime (GM8E01): https://mega.nz/#!2JEDHIQT!9UVh6ML_DH8zSjZbukqiNuReDkdKF
 Tony Hawk's Pro Skater 3 (GT3E52): https://mega.nz/#!Wd8CUSYC!4kXspst7w3DJbcNqvns1XdJQKqZL0Z7u39NfcMoEDmg
 
 Viewtiful Joe (GVJE08): https://mega.nz/#!LAs0nSYY!sfFojNtdYaSgXC5T73kgiTDBB6UPxWZEqdSA0FlQ-Ks
+
+Soulcalibur II (GRSEAF): https://mega.nz/#!PNs3FAoA!sa2_hbDf46EvowN6zHKs1XQRAPzX0NF3MKOAm_WA3Do
+
+Non-Dolphin Games:
+
+Turok 2: Seeds of Evil (Steam Version): https://www.nexusmods.com/turok2/mods/4
