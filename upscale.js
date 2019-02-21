@@ -8,6 +8,7 @@ const folderPath = `${__dirname}/input/${gameKey}`;
 
 let ignoreList = [];
 let includeList = [];
+const fmvList = includeList = fs.readFileSync(`fmv_resolutions.txt`).toString().replace(/\r/g, '').split('\n');
 
 // Load game specific exceptions
 if (fs.existsSync(`ignore/${gameKey}.txt`)) {
@@ -61,7 +62,9 @@ const esrganAlpha = async () => {
 
 	child.on('close', (code) => {
 		esrganAlphaChannel();
-		console.log(`child process exited with code ${code}`);
+		if (parseInt(code) === 0) {
+			console.log(`child process exited with code ${code}`);
+		}
 	});
 };
 
@@ -74,7 +77,10 @@ const esrganAlphaChannel = async () => {
 
 	child.on('close', (code) => {
 		console.log(`child process exited with code ${code}`);
-		combineAlphaChannels();
+
+		if (parseInt(code) === 0) {
+			combineAlphaChannels();
+		}
 	});
 };
 
@@ -98,7 +104,7 @@ const combineAlphaChannels = async () => {
 const combine = async (imagePath, alphaPath, file) => {
 	const metadata = await sharp(alphaPath).metadata();
 	// Gamma correction is used to compensate for noise added by ESRGAN
-	const alpha = await sharp(alphaPath).toColourspace('b-w').gamma(2.4).raw().toBuffer();
+	const alpha = await sharp(alphaPath).toColourspace('b-w').gamma(2.2).raw().toBuffer();
 
 	await sharp(imagePath).joinChannel(alpha, {raw: {
 		width: metadata.width,
@@ -116,6 +122,17 @@ const isMonoColor = (stats) => {
 
 const hasAlphaChannel = (stats) => {
 	return !stats.isOpaque && stats.channels[3];
+};
+
+const isFmv = (filename) => {
+	for (let i = 0; i < fmvList.length; i++) {	
+
+		if (filename.includes(fmvList[i])) {
+			return true;
+		}
+	}
+
+	return false
 };
 
 const processImage = async (file, filePath) => {
@@ -136,10 +153,7 @@ const processImage = async (file, filePath) => {
 		}
 
 		// remove fmv resolution textures
-		if (file.includes('320x240') ||
-			file.includes('640x480') ||
-			file.includes('642x450') ||
-			file.includes('640x448')) {
+		if (isFmv(file)) {
 			console.log(`fmv found, moving: ${file}`);
 			// fs.unlinkSync(filePath);
 			fs.copyFileSync(filePath, `${outputPath}/fmv/${file}`);
@@ -179,7 +193,7 @@ const processImage = async (file, filePath) => {
 
 		return;
 	} else {
-		console.log(`image without alpha found: ${file}`)
+		console.log(`image without alpha found: ${file}`);
 		fs.copyFileSync(filePath, `${outputPath}/nonalpha/${file}`);
 	}
 };
