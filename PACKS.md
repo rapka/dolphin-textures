@@ -4,13 +4,15 @@ If you're using these alongside another texture pack (like Hypatia's Viewtiful J
 
 
 
-Metroid Prime (GM8E01): https://mega.nz/#!2JEDHIQT!9UVh6ML_DH8zSjZbukqiNuReDkdKFwsDz8V2xQiQST4
+[GM8E01] Metroid Prime: https://mega.nz/#!2JEDHIQT!9UVh6ML_DH8zSjZbukqiNuReDkdKFwsDz8V2xQiQST4
 
-Tony Hawk's Pro Skater 3 (GT3E52): https://mega.nz/#!Wd8CUSYC!4kXspst7w3DJbcNqvns1XdJQKqZL0Z7u39NfcMoEDmg
+[GT3E52] Tony Hawk's Pro Skater 3: https://mega.nz/#!Wd8CUSYC!4kXspst7w3DJbcNqvns1XdJQKqZL0Z7u39NfcMoEDmg
 
-Viewtiful Joe (GVJE08): https://mega.nz/#!LAs0nSYY!sfFojNtdYaSgXC5T73kgiTDBB6UPxWZEqdSA0FlQ-Ks
+[GVJE08] Viewtiful Joe: https://mega.nz/#!LAs0nSYY!sfFojNtdYaSgXC5T73kgiTDBB6UPxWZEqdSA0FlQ-Ks
 
-Soulcalibur II (GRSEAF): https://mega.nz/#!PNs3FAoA!sa2_hbDf46EvowN6zHKs1XQRAPzX0NF3MKOAm_WA3Do
+[GRSEAF] Soulcalibur II: https://mega.nz/#!PNs3FAoA!sa2_hbDf46EvowN6zHKs1XQRAPzX0NF3MKOAm_WA3Do
+
+[GALE01] Super Smash Bros. Melee: https://mega.nz/#!DE9EFaSa!sZ3UwrdmyLKKh2IM3J6AR4J5OmUfy90rv21hPeWlNOc
 
 Non-Dolphin Games:
 
