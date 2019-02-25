@@ -160,7 +160,7 @@ const processImage = async (file, filePath) => {
 		if (isFmv(file)) {
 			console.log(`fmv found, moving: ${file}`);
 			// fs.unlinkSync(filePath);
-			fs.copyFileSync(filePath, `${outputPath}/fmv/${file}`);
+			fs.renameSync(filePath, `${outputPath}/fmv/${file}`);
 			return;
 		}
 	}
