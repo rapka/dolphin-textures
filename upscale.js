@@ -49,7 +49,10 @@ const esrganNonalpha = async () => {
 
 	child.on('close', (code) => {
 		console.log(`child process exited with code ${code}`);
-		esrganAlpha();
+
+		if (parseInt(code) === 0) {
+			esrganAlpha();
+		}
 	});
 };
 
@@ -61,9 +64,10 @@ const esrganAlpha = async () => {
 	child.stderr.pipe(process.stderr);
 
 	child.on('close', (code) => {
-		esrganAlphaChannel();
+		console.log(`child process exited with code ${code}`);
+
 		if (parseInt(code) === 0) {
-			console.log(`child process exited with code ${code}`);
+			esrganAlphaChannel();
 		}
 	});
 };
