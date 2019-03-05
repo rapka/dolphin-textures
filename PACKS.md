@@ -14,6 +14,10 @@ If you're using these alongside another texture pack (like Hypatia's Viewtiful J
 
 [GALE01] Super Smash Bros. Melee: https://mega.nz/#!DE9EFaSa!sZ3UwrdmyLKKh2IM3J6AR4J5OmUfy90rv21hPeWlNOc
 
+[NAKE01] Pokemon Snap: https://mega.nz/#!OZ1RUKAQ!l225vo2KmIg6yCRUNQQqeeVgyK6RT4zxKxIHpwgSipY
+
+[NAIE01] Wave Race 64: https://mega.nz/#!TJ0jjIZA!UQh8r_luF9RekfPbOfNa-Cj9Qgjxj83uOjCPfhXNsgQ
+
 Non-Dolphin Games:
 
 Turok 2: Seeds of Evil (Steam Version): https://www.nexusmods.com/turok2/mods/4
