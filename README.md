@@ -1,4 +1,4 @@
-*Looking for my actual texture packs? see [PACKS.md](PACKS.md)*
+## *Looking for texture packs download links? see [PACKS.md](PACKS.md)*
 
 # dolphin-textures
 This is a script for batch upscaling of images with [ESRGAN](https://github.com/xinntao/ESRGAN). It is designed to be used with textures dumped from the Dolphin Gamecube/Wii emulator, but can be used for any images.
