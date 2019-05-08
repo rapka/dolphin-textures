@@ -8,7 +8,7 @@ const folderPath = `${__dirname}/input/${gameKey}`;
 
 let ignoreList = [];
 let includeList = [];
-const fmvList = includeList = fs.readFileSync(`fmv_resolutions.txt`).toString().replace(/\r/g, '').split('\n');
+const fmvList = includeList = fs.readFileSync(`ignore_patterns.txt`).toString().replace(/\r/g, '').split('\n');
 
 // Load game specific exceptions
 if (fs.existsSync(`ignore/${gameKey}.txt`)) {
@@ -23,7 +23,7 @@ const outputPath = `${__dirname}/output/${gameKey}-output`;
 
 path.sep = '/';
 const testPyPath = path.normalize(path.resolve(__dirname, 'node_modules', 'esrgan', 'test.py'));
-const modelPath = path.normalize(path.resolve(__dirname, 'node_modules', 'esrgan', 'models', 'manga.pth'));
+const modelPath = path.normalize(path.resolve(__dirname, 'node_modules', 'esrgan', 'models', 'reduced.pth'));
 
 try {
 	fs.mkdirSync(outputPath);
@@ -36,6 +36,7 @@ try {
 	fs.mkdirSync(`${outputPath}/alpha-final`);
 	fs.mkdirSync(`${outputPath}/ignored`);
 	fs.mkdirSync(`${outputPath}/fmv`);
+	fs.mkdirSync(`${outputPath}/mismatch`);
 } catch {
 	// Let these fail silently
 }
@@ -96,19 +97,41 @@ const combineAlphaChannels = async () => {
 	let file;
 	for (let i = 0; i < files.length; i++) {
 		file = files[i];
-		console.log(`Merging #${i}/${files.length} ${file}`);
+		console.log(`Merging #${i + 1}/${files.length} ${file}`);
 
 		const imagePath = `${outputPath}/alpha-processed/${file}`;
 		const alphaPath = `${outputPath}/alphachannel-processed/${file}`;
 
 		await combine(imagePath, alphaPath, file);
 	}
+
+	await ensureAlpha();
 };
+
+const ensureAlpha = async () => {
+	const files = fs.readdirSync(`${outputPath}/nonalpha-final`);
+
+	console.log(`Restoring alpha channel to ${files.length} textures.`)
+
+	let file;
+	for (let i = 0; i < files.length; i++) {
+		file = files[i];
+		const imagePath = `${outputPath}/nonalpha-final/${file}`;
+		const newPath = imagePath.replace('temp--', '');
+		const newName = file.replace('temp--', '');
+
+		console.log(`Adding opaque alpha channel for #${i + 1}/${files.length} ${newName}`);
+ 
+		await sharp(imagePath).linear(1, -5).ensureAlpha().toFile(newPath);
+		fs.unlinkSync(imagePath);
+	}
+};
+
 
 const combine = async (imagePath, alphaPath, file) => {
 	const metadata = await sharp(alphaPath).metadata();
 	// Gamma correction is used to compensate for noise added by ESRGAN
-	const alpha = await sharp(alphaPath).toColourspace('b-w').gamma(2.2).raw().toBuffer();
+	const alpha = await sharp(alphaPath).toColourspace('b-w').gamma(2.3).raw().toBuffer();
 
 	await sharp(imagePath).joinChannel(alpha, {raw: {
 		width: metadata.width,
@@ -125,7 +148,9 @@ const isMonoColor = (stats) => {
 };
 
 const hasAlphaChannel = (stats) => {
+	// console.log('fff', stats.isOpaque, stats.channels[3]);
 	return !stats.isOpaque && stats.channels[3];
+	//return !!stats.channels[3];
 };
 
 const isFmv = (filename) => {
@@ -133,10 +158,24 @@ const isFmv = (filename) => {
 
 		if (filename.includes(fmvList[i])) {
 			return true;
+		} else if ((new RegExp(fmvList[i])).test(filename)) {
+			return true;
 		}
 	}
 
-	return false
+	return false;
+};
+
+const isMismatch = (filename, metadata) => {
+	return false;
+	const regex = /(\d+)x(\d+)/.exec(filename);
+
+	if (parseInt(regex[1]) !== metadata.width ||
+		parseInt(regex[2]) !== metadata.height) {
+		return true;
+	}
+
+	return false;
 };
 
 const processImage = async (file, filePath) => {
@@ -166,7 +205,7 @@ const processImage = async (file, filePath) => {
 	}
 
 	const stats = await sharp(filePath).stats();
-
+	
 	// Delete single color textures
 	if (isMonoColor(stats)) {
 		console.log(`single color image found, removing: ${file}`);
@@ -174,9 +213,18 @@ const processImage = async (file, filePath) => {
 		return;
 	}
 
+	const metadata = await sharp(filePath).metadata();
+
+	// Detect filename / resolution mismatches
+	if (isMismatch(file, metadata)) {
+		console.log(`filename and resolution mismatch: ${file}`);
+		fs.copyFileSync(filePath, `${outputPath}/mismatch/${file}`);
+		return;
+	}
+
 	if (hasAlphaChannel(stats)) {
 		console.log(`image with alpha channel found: ${file}`);
-		const metadata = await sharp(filePath).metadata();
+		//const metadata = await sharp(filePath).metadata();
 
 		// Upscale then downscale alpha channel to create an antialiasing effect
 		await sharp(filePath)
@@ -198,7 +246,10 @@ const processImage = async (file, filePath) => {
 		return;
 	} else {
 		console.log(`image without alpha found: ${file}`);
-		fs.copyFileSync(filePath, `${outputPath}/nonalpha/${file}`);
+		// await sharp(filePath)
+		// 	.resize({ width: metadata.width * 2, kernel: 'lanczos3' })
+		// 	.toFile(`${outputPath}/nonalpha/${file}`);
+		fs.copyFileSync(filePath, `${outputPath}/nonalpha/temp--${file}`);
 	}
 };
 
@@ -218,4 +269,11 @@ const main = async () => {
 };
 
 main()
-.then(() => esrganNonalpha());
+  .then(() => esrganNonalpha());
+
+//main();
+
+//esrganNonalpha();
+//esrganAlpha();
+//combineAlphaChannels();
+//combineAlphaChannels();

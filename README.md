@@ -6,7 +6,7 @@ This is a script for batch upscaling of images with [ESRGAN](https://github.com/
 # Requirements
 All the requirements for running ESRGAN by itself still apply. They are detailed in [this blog post](https://kingdomakrillic.tumblr.com/post/178254875891/i-figured-out-how-to-get-esrgan-and-sftgan).
 
-Additionally, Node.js v10 is required, which can be download [here](https://nodejs.org/en/download/)
+Additionally, Node.js v10 is required, which can be downloaded [here](https://nodejs.org/en/download/)
 
 # Usage
 
@@ -20,7 +20,8 @@ Additionally, Node.js v10 is required, which can be download [here](https://node
 # Implementation details
 Before upscaling, the script does a few checks to make sure each image is actually worth upscaling:
 * Images that contain `_mip` in the filename are treated as uselss mipmaps and deleted.
-* Because Dolphin dumps individual frames from FMV movies in some games, some dimensions that are included in filenames (such as "320x240") are ignored and moved to the `output/[gameID]/fmv`.
+* Because Dolphin dumps individual frames from FMV movies in some games, some dumped textures should be ignored. To that end, the script ignores files whose name contains one of the strings in `ignore_patterns.txt`. The file comes prefilled with several resolutions I've found it helpful to ignore. To enable one, remove the `// ` from the line it's on. 
+** Note that regular expressions can be used in this file as well.
 * Any images that are uniformly one color are deleted because upscaling them would be a waste of time
-* ESRGAN doesn't know how to handle images with transparency. To get around this limitation, transparent images have their alpha channels extracted into a separate channel to be upscaled independently. These upscaled images are then gamma corrected to account for noise introduced by the algorithm and  are then merged back into the main image.
+* ESRGAN doesn't know how to handle images with transparency. To get around this limitation, transparent images have their alpha channels extracted into a separate channel to be upscaled independently. These upscaled images are then gamma corrected to account for noise introduced by the algorithm and are then merged back into the main image.
 * For debugging purposes, the rest of the folders in `output` contain intermediary images used during this process.
