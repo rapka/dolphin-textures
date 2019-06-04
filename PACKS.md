@@ -18,6 +18,8 @@ If you're using these alongside another texture pack (like Hypatia's Viewtiful J
 
 [NAIE01] Wave Race 64: https://mega.nz/#!TJ0jjIZA!UQh8r_luF9RekfPbOfNa-Cj9Qgjxj83uOjCPfhXNsgQ
 
+[NAME01] Mario Kart 64: https://mega.nz/#!uBFV0KRZ!9M6SROjZJ5Z3RlGMJu9UHSp1RYIZk4KfmGnssGwDkWg
+
 Non-Dolphin Games:
 
 Turok 2: Seeds of Evil (Steam Version): https://www.nexusmods.com/turok2/mods/4
