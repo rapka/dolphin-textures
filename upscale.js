@@ -122,7 +122,7 @@ const ensureAlpha = async () => {
 
 		console.log(`Adding opaque alpha channel for #${i + 1}/${files.length} ${newName}`);
  
-		await sharp(imagePath).linear(1, -5).ensureAlpha().toFile(newPath);
+		await sharp(imagePath).linear(1, 1).ensureAlpha().toFile(newPath);
 		fs.unlinkSync(imagePath);
 	}
 };
@@ -131,13 +131,19 @@ const ensureAlpha = async () => {
 const combine = async (imagePath, alphaPath, file) => {
 	const metadata = await sharp(alphaPath).metadata();
 	// Gamma correction is used to compensate for noise added by ESRGAN
-	const alpha = await sharp(alphaPath).toColourspace('b-w').gamma(2.3).raw().toBuffer();
+	const alpha = await sharp(alphaPath).toColourspace('b-w').linear(1, -5).gamma(2.3).raw().toBuffer();
+
+	//const alpha = await sharp(alphaPath).toColourspace('b-w').raw().toBuffer();
+
 
 	await sharp(imagePath).joinChannel(alpha, {raw: {
 		width: metadata.width,
 		height: metadata.height,
 		channels: 1,
 	 }}).toFile(`${outputPath}/alpha-final/${file}`);
+
+	fs.unlinkSync(imagePath);
+	fs.unlinkSync(alphaPath);
 };
 
 const isMonoColor = (stats) => {
@@ -197,9 +203,8 @@ const processImage = async (file, filePath) => {
 
 		// remove fmv resolution textures
 		if (isFmv(file)) {
-			console.log(`fmv found, moving: ${file}`);
-			// fs.unlinkSync(filePath);
-			fs.renameSync(filePath, `${outputPath}/fmv/${file}`);
+			console.log(`fmv found, copying: ${file}`);
+			fs.copyFileSync(filePath);
 			return;
 		}
 	}
